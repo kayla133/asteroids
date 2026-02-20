@@ -1,8 +1,14 @@
 #  LIST OF SPRITES THAT NEED TO BE MADE
-# [ ] Player
-# [ ] Base (Space Station)
+# [X] Superman
+# [X] Sun
 # [X] Asteroids
-# [ ] Laser
+# [X] Kryptonite
+# [X] Louis
+
+# Features To-Do:
+# Add Earth
+# Organize into Classes
+# Levels
 
 import arcade
 import random
@@ -46,7 +52,6 @@ class MyGame(arcade.Window):
         self.lois_preview = None
         
         self.spawn_timer = 0
-        self.collision_sound = arcade.load_sound(":resources:sounds/hit2.wav")
         arcade.set_background_color(arcade.color.DARK_BLUE)
 
     def load_high_score(self):
@@ -109,6 +114,10 @@ class MyGame(arcade.Window):
         krap.center_y = SCREEN_HEIGHT + 20
         krap.change_y = -4 
         self.krypto_list.append(krap)
+
+    # def spawn_earth(self):
+    #     krap = arcade.Sprite("images/earth.png")
+    #     self.your_sprite.bottom = 0
 
     def on_draw(self):
         self.clear()
@@ -228,7 +237,6 @@ class MyGame(arcade.Window):
             a.remove_from_sprite_lists()
             if not in_safe_zone:
                 self.score += 1
-                arcade.play_sound(self.collision_sound)
                 if self.score > self.high_score:
                     self.high_score = self.score
                     self.save_high_score()
