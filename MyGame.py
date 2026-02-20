@@ -6,9 +6,10 @@
 # [X] Louis
 
 # Features To-Do:
-# Add Earth
-# Organize into Classes
-# Levels
+# [ ] Add Earth
+# [ ] Organize into Classes
+# [ ] Levels
+# [ ] Reset High Score Option
 
 import arcade
 import random
@@ -50,12 +51,12 @@ class MyGame(arcade.Window):
         self.player_sprite = None
         self.sun_sprite = None
         self.lois_preview = None
+        self.earth_sprite = None
         
         self.spawn_timer = 0
-        arcade.set_background_color(arcade.color.DARK_BLUE)
+        arcade.set_background_color((8, 48, 55))
 
     def load_high_score(self):
-        """Loads high score from a file. Returns 0 if file doesn't exist."""
         if os.path.exists("highscore.txt"):
             with open("highscore.txt", "r") as f:
                 try:
@@ -65,12 +66,10 @@ class MyGame(arcade.Window):
         return 0
 
     def save_high_score(self):
-        """Saves current high score to a file."""
         with open("highscore.txt", "w") as f:
             f.write(str(self.high_score))
 
     def setup(self):
-        """Set up the game variables and reset the game state."""
         self.player_list = arcade.SpriteList()
         self.station_list = arcade.SpriteList()
         self.asteroid_list = arcade.SpriteList()
@@ -86,14 +85,17 @@ class MyGame(arcade.Window):
         self.player_sprite.center_y = 300
         self.player_list.append(self.player_sprite)
 
-        # Lois Preview Sprite (Only used on start screen)
+        # Lois Preview
         self.lois_preview = arcade.Sprite("images/louis.png", PLAYER_SCALING)
 
-        # The Sun (Safe Zone Center)
+        # The Sun
         self.sun_sprite = arcade.Sprite("images/sun.png", 3.5)
         self.sun_sprite.center_x = 100
         self.sun_sprite.center_y = 500
         self.station_list.append(self.sun_sprite)
+
+        # --- NEW: Call Earth Setup ---
+        self.spawn_earth()
 
         for i in range(5):
             self.spawn_asteroid()
@@ -115,26 +117,24 @@ class MyGame(arcade.Window):
         krap.change_y = -4 
         self.krypto_list.append(krap)
 
-    # def spawn_earth(self):
-    #     krap = arcade.Sprite("images/earth.png")
-    #     self.your_sprite.bottom = 0
+    def spawn_earth(self):
+        # Create the earth and add it to station_list so it draws automatically
+        self.earth_sprite = arcade.Sprite("images/earth.png", 1.5)
+        self.earth_sprite.center_x = SCREEN_WIDTH / 2
+        self.earth_sprite.bottom = 0 # Touches the bottom of the screen
+        self.station_list.append(self.earth_sprite)
 
     def on_draw(self):
         self.clear()
-        
-        # 1. Draw all game objects
         self.station_list.draw()
         self.asteroid_list.draw()
         self.krypto_list.draw()
         self.player_list.draw()
 
-        # 2. Draw HUD
         arcade.draw_text(f"Score: {self.score}", 10, 40, arcade.color.WHITE, 14)
         arcade.draw_text(f"High Score: {self.high_score}", 10, 20, arcade.color.GOLD, 14)
 
-        # 3. Start Instructions Pop-up
         if self.show_instructions:
-            # White Background Box
             arcade.draw_lrbt_rectangle_filled(SCREEN_WIDTH/2 - 300, SCREEN_WIDTH/2 + 300, 
                                               SCREEN_HEIGHT/2 - 200, SCREEN_HEIGHT/2 + 200, 
                                               arcade.color.WHITE)
@@ -145,13 +145,11 @@ class MyGame(arcade.Window):
             arcade.draw_text("SUPERMAN SURVIVAL", SCREEN_WIDTH/2, SCREEN_HEIGHT/2 + 150, 
                              arcade.color.BLACK, 35, anchor_x="center", bold=True)
             
-            # Lois Sprite on the Left
             if self.lois_preview:
                 self.lois_preview.center_x = SCREEN_WIDTH/2 - 180
                 self.lois_preview.center_y = SCREEN_HEIGHT/2 + 20
                 arcade.draw_sprite(self.lois_preview)
             
-            # Instructions on the Right
             rules = ("INSTRUCTIONS:\n"
                      "- Use ARROWS to move Superman.\n"
                      "- Collect Asteroids for +1 point.\n"
@@ -161,11 +159,9 @@ class MyGame(arcade.Window):
             arcade.draw_text(rules, SCREEN_WIDTH/2 - 50, SCREEN_HEIGHT/2 + 30, 
                              arcade.color.BLACK, 14, anchor_x="left", multiline=True, width=300)
 
-            # Centered Start Text at the Bottom
             arcade.draw_text("Press SPACE to Start", SCREEN_WIDTH/2, SCREEN_HEIGHT/2 - 160, 
                              arcade.color.DARK_BLUE, 24, anchor_x="center", bold=True)
 
-        # 4. Game Over Pop-up
         elif self.game_over:
             arcade.draw_lrbt_rectangle_filled(SCREEN_WIDTH/2 - 250, SCREEN_WIDTH/2 + 250, 
                                               SCREEN_HEIGHT/2 - 120, SCREEN_HEIGHT/2 + 80, 
@@ -215,7 +211,6 @@ class MyGame(arcade.Window):
 
         self.player_list.update()
         
-        # --- SCREEN BOUNDARIES ---
         if self.player_sprite.left < 0:
             self.player_sprite.left = 0
         elif self.player_sprite.right > SCREEN_WIDTH:
