@@ -6,7 +6,7 @@
 # [X] Louis
 
 # Features To-Do:
-# [ ] Add Earth
+# [X] Add Earth
 # [ ] Organize into Classes
 # [ ] Levels
 # [ ] Reset High Score Option
@@ -22,7 +22,7 @@ SCREEN_TITLE = "Superman Survival"
 PLAYER_SCALING = 1
 ASTEROID_SCALING = 0.8
 PLAYER_SPEED = 5
-KRYPTO_SCALING = 0.8
+KRYPTO_SCALING = 0.7
 SPAWN_SPEED = 1.0
 
 class MyGame(arcade.Window):
